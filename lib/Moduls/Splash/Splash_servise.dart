@@ -4,7 +4,7 @@ import 'package:untitled6/Config/ConfigServer.dart';
 import 'package:untitled6/Models/user.dart';
 
 class SpalshService {
-  var url = Uri.parse(ServerConfig.DomainNameServer + ServerConfig.check_validity);
+  var url = Uri.parse(ServerConfig.DomainNameServer + ServerConfig.checkValidity);
   var massage;
   Future<bool> ChechValid(String token) async {
     var response = await http.get(

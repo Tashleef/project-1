@@ -1,16 +1,22 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/list_notifier.dart';
 import 'package:untitled6/Config/ConfigServer.dart';
 import 'package:untitled6/Models/user.dart';
 import 'package:untitled6/Moduls/Login/Login_Service.dart';
 import 'package:untitled6/native_service/secure_storage.dart';
 
 class LoginController extends GetxController {
-  late String email;
-  var password;
-  var LoginStatus;
+  late RxString email;
+  late RxString password;
+  late var  loginStatus;
   var message;
   var checkBoxStatus;
+  late TextEditingController? emailController;
+  late TextEditingController? passwordController;
   late LoginService service ;
 
 
@@ -19,30 +25,33 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
-    email= '';
-    password= '';
-    LoginStatus= false;
-    message ='';
-    checkBoxStatus=false.obs;
-    service=LoginService();
     super.onInit();
+    email= ''.obs;
+    password= ''.obs;
+    message ='';
+    checkBoxStatus=false;
+    service=LoginService();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
   }
   void changeCheckBox() async {
     checkBoxStatus(!checkBoxStatus.value);
 
   }
 
-  Future<void> LoginButton() async {
+
+  Future <bool> LoginButton() async {
     User user = User(
-      email: email,
-      password: password,
+      email: email.value,
+      password: password.value,
     );
-    LoginStatus = await service.login(user , checkBoxStatus.value);
-    message = service.massage;
-    if (message is List) {
-      String temp = '';
-      for (String s in message) temp += s + '\n';
-      message = temp;
+    loginStatus = await service.login(user);
+    message = loginStatus[1];
+    if(loginStatus[0] == 200){
+      return true;
+    }else{
+      return false;
     }
+
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:untitled6/Config/user_information.dart';
+import 'package:untitled6/Models/user.dart';
 import 'package:untitled6/Moduls/Splash/Splash_servise.dart';
 import 'package:untitled6/native_service/secure_storage.dart';
 
@@ -11,7 +13,7 @@ class SplashController extends GetxController {
   void onInit() async {
     valid_token = false;
     storage = SecureStorage();
-    service= SpalshService();
+    service = SpalshService();
     await ChechToken();
     super.onInit();
   }
@@ -27,20 +29,19 @@ class SplashController extends GetxController {
     String? token = await storage.read('token');
     if (token != null) {
       await ValidToken(token);
-          if(valid_token){
-Get.offAllNamed('/AllProducts');
-          }
-    else {
-      EasyLoading.showError(service.massage ,dismissOnTap: true );
-            Get.offAllNamed('/Login');
-
-          }
+      if (valid_token) {
+        UserInformation.user_token = token;
+        Get.offAllNamed('/AllProducts');
+      } else {
+        EasyLoading.showError(service.massage, dismissOnTap: true);
+        Get.offAllNamed('/Login');
+      }
     } else {
       Get.offAllNamed('/Login');
     }
   }
 
-  Future<void> ValidToken (String token) async{
-  valid_token = await service.ChechValid(token);
+  Future<void> ValidToken(String token) async {
+    valid_token = await service.ChechValid(token);
   }
 }

@@ -3,7 +3,7 @@ class User{
   String? name;
   String? email;
   String? password;
-  int? phone_number;
+  String? phone_number;
 
 
   User({

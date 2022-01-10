@@ -25,7 +25,7 @@ class CategoriesList extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                       color: select,
-                      blurRadius: 5
+                      blurRadius: 1
                   )
                 ],
                 border: Border.all(color: select,

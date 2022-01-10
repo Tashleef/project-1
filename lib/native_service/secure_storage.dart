@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage{
-  final storage = new FlutterSecureStorage();
+  final storage =  const FlutterSecureStorage();
   
   Future<void>save(String key , String value) async
   {

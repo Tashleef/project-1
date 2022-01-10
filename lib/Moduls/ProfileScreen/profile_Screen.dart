@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled6/Moduls/All_Products/All_ProdcutsController.dart';
 import 'package:untitled6/Moduls/Login/login.dart';
 import 'package:untitled6/component/product_card.dart';
 import 'package:untitled6/constant.dart';
@@ -6,7 +7,8 @@ class Profile extends StatelessWidget {
   final height;
   final width;
   final username;
-  Profile({this.height,this.width,this.username});
+  final myProduct;
+  Profile({this.height,this.width,this.username,this.myProduct});
   @override
   Widget build(BuildContext context) {
     return  Material(
@@ -14,13 +16,16 @@ class Profile extends StatelessWidget {
         color: Colors.white,
         height: height*0.9,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget> [
-
-            Container(
-              height: height*0.05,
-              decoration: BoxDecoration(
-                  color: kPrimaryColor,
-                  borderRadius: BorderRadius.circular(10)
+            Align(
+              child: Container(
+                alignment: Alignment.topCenter,
+                height: height*0.05,
+                decoration: BoxDecoration(
+                    color: kPrimaryColor,
+                    borderRadius: BorderRadius.circular(10)
+                ),
               ),
             ),
            Center(
@@ -51,28 +56,30 @@ class Profile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20,),
-            Stack(
-              children: [
-                Container(
-                  height:height * 0.45,
-                  decoration: const BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(color: kSecondryColor, blurRadius: 20)
-                      ],
-                      gradient: LinearGradient(colors: [kPrimaryColor,kSecondryColor]),
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(40),
-                          topLeft: Radius.circular(40))),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  height: height*0.42,
-                  child: ListView.builder(
-                      itemBuilder: (context,index){
-                    return MyProductCard(radius: 20.0,shadowColor: kPrimaryColor,);
-                  }),
-                ),
-              ],
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(color: kSecondryColor, blurRadius: 20)
+                        ],
+                        gradient: LinearGradient(colors: [kPrimaryColor,kSecondryColor]),
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(40),
+                            topLeft: Radius.circular(40))),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20),
+                    child: ListView.builder(
+                        itemCount: myProduct.length,
+                        itemBuilder: (context,index){
+                      return MyProductCard(radius: 20.0,shadowColor: kPrimaryColor,
+                      list: myProduct[index],);
+                    }),
+                  ),
+                ],
+              ),
             )
           ],
         ),
