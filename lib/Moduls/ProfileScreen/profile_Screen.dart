@@ -25,10 +25,10 @@ class Profile extends StatelessWidget {
             ),
            Center(
              child: Container(
-               margin: EdgeInsets.symmetric(vertical: 5),
+               margin:const EdgeInsets.symmetric(vertical: 5),
                height: height*0.25,
                width: width*0.5,
-               decoration: BoxDecoration(
+               decoration:const  BoxDecoration(
                    image: DecorationImage(
                        image: AssetImage('images/vector.jpg')
                    )
@@ -37,29 +37,29 @@ class Profile extends StatelessWidget {
            ),
             Text(
               'You look fresh today $username',
-              style: TextStyle(
+              style:const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20
               ),
             ),
-            SizedBox(height:10),
-            Text(
+            const SizedBox(height:10),
+            const Text(
               'Here are your products',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20
               ),
             ),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Stack(
               children: [
                 Container(
                   height:height * 0.45,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       boxShadow: [
                         BoxShadow(color: kSecondryColor, blurRadius: 20)
                       ],
-                      color: kPrimaryColor,
+                      gradient: LinearGradient(colors: [kPrimaryColor,kSecondryColor]),
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(40),
                           topLeft: Radius.circular(40))),
@@ -67,7 +67,8 @@ class Profile extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(top: 20),
                   height: height*0.42,
-                  child: ListView.builder(itemBuilder: (context,index){
+                  child: ListView.builder(
+                      itemBuilder: (context,index){
                     return MyProductCard(radius: 20.0,shadowColor: kPrimaryColor,);
                   }),
                 ),
