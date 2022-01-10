@@ -8,12 +8,12 @@ import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:untitled6/Moduls/Product_Details/Product_DetailsController.dart';
 import 'dart:io';
-import '../../constant.dart';
-import 'Edit_ItemController.dart';
+import '../../../constant.dart';
 
 
-final controller = Get.put(EditItemController());
+final controller = Get.put(ProductDetailsController());
 class EditItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -244,6 +244,7 @@ class EditItemPage extends StatelessWidget {
                         alignment: Alignment.center,
                         child: GestureDetector(
                           onTap: () async {
+                            print(Get.arguments);
                              onClickEditItem(Get.arguments);
                           },
                           child: Container(
@@ -305,11 +306,11 @@ class EditItemPage extends StatelessWidget {
     print(id);
     EasyLoading.show(status: 'loading..');
     await controller.editItemButton(id);
-    if (controller.EditItemStatus) {
-      EasyLoading.showSuccess(controller.message, dismissOnTap: true);
+    if (controller.editItemStatus.value) {
+      EasyLoading.showSuccess(controller.message.value, dismissOnTap: true);
       Get.offAllNamed('/AllProducts');
     } else {
-      EasyLoading.showError(controller.message, dismissOnTap: true);
+      EasyLoading.showError(controller.message.value, dismissOnTap: true);
     }
   }
 }

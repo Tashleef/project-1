@@ -9,39 +9,36 @@ import 'package:untitled6/native_service/secure_storage.dart';
 
 class LoginService {
   var url = Uri.parse(ServerConfig.DomainNameServer + ServerConfig.login);
-  var massage;
+  var message;
   var token;
-  Future<bool> login(User user , bool checkBox) async {
-    var response = await http.post(url, headers: {
-      'Accept': 'aplication/json',
-    }, body: {
-      'email': user.email,
-      'password': user.password,
-    });
+  var id;
+  Future<dynamic> login(User user) async {
+    print(url);
+      var response = await http.post(url, headers: {
+        'Accept': 'aplication/json',
+      }, body: {
+        'email': user.email,
+        'password': user.password,
+      }).timeout( Duration(seconds: 10), onTimeout: (){
+
+        return  http.Response('Error', 400);
+      }, );
+      print(response.statusCode);
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
-      massage = jsonResponse['msg'];
+      message = jsonResponse['message'];
       token = jsonResponse['token'];
-      UserInformation.user_token=token;
-      if(checkBox)
-        {
-          // save token to device
-          SecureStorage storage = new SecureStorage();
-         await storage.save('token', UserInformation.user_token);
-        }
-      return true;
-    } else if (response.statusCode == 422) {
+      id = jsonResponse['id'];
+      SecureStorage storage =  SecureStorage();
+      await storage.save('token', token);
+      await storage.save('id', id.toString());
+      return [response.statusCode, message];
+    }else if(response.statusCode == 401){
       var jsonResponse = jsonDecode(response.body);
-      massage = jsonResponse['errors'];
-      return false;
-    } else if (response.statusCode == 401) {
-      var jsonResponse = jsonDecode(response.body);
-      massage = jsonResponse['errors'];
-      return false;
-    } else {
-      var jsonResponse = jsonDecode(response.body);
-      massage = jsonResponse['errors'];
-      return false;
+      message = jsonResponse['message'];
+      return [response.statusCode , message];
+    }else {
+      return [response.statusCode,'something went wrong'];
     }
   }
 }

@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:untitled6/Moduls/Login/Login.dart';
-import 'package:untitled6/Screens/profile_Screen.dart';
-import 'package:untitled6/Moduls/Add_Item/Add_Item.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:untitled6/Moduls/ProfileScreen/profileController.dart';
+import 'package:untitled6/Moduls/ProfileScreen/profile_Screen.dart';
 import 'package:untitled6/component/category_design.dart';
 import 'package:untitled6/component/product_card.dart';
-import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:untitled6/component/search_bar.dart';
-import 'package:untitled6/constant.dart';
-
+import '../../constant.dart';
+import 'All_ProdcutsController.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -16,8 +19,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
-  int selectedIndex = 0;
+  final controller =
+  Get.put<All_Products_Controller>(All_Products_Controller());
+
   ScrollController scrollController = ScrollController();
+
   bool dragDown = false;
   @override
   void initState() {
@@ -37,14 +43,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     scrollController.dispose();
   }
 
-  final categories = [
-    "all",
-    "shoes",
-    "sofa",
-    "others",
-  ];
 
-  String username = "Faek";
+  final categories = <String> ['All','Foods', 'Drinks', 'Medicine', 'Others'];
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -52,9 +53,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>Additem()));
+            Get.toNamed('/AddItem');
           },
-          backgroundColor: Colors.green,
+          backgroundColor: kSecondryColor.withAlpha(230),
           child: const Icon(Icons.add),
         ),
         resizeToAvoidBottomInset: false,
@@ -63,23 +64,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             onPressed: () => showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
-                title: Text('Logging out'),
-                content: Text('are you sure you want to logout'),
+                title: const Text('Logging out'),
+                content: const Text('are you sure you want to logout'),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    onPressed: () => Get.back(),
                     child: const Text('Cancel'),
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.offAllNamed('/Login');
                     },
                     child: const Text('Log Out'),
                   ),
                 ],
               ),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.exit_to_app,
               size: 35,
               color: Colors.black,
@@ -87,27 +88,30 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           backgroundColor: Colors.white,
           elevation: 0.0,
-          title: Text(
-            'Productive',
+          title: const Text(
+            'BuyMe',
             style: TextStyle(color: Colors.black),
           ),
           actions: [
             Center(
-                child: Text(
-                  'Welcome $username!',
-                  style: TextStyle(
+              child: Obx(
+                () => Text(
+                  'Welcome ${controller.name.value}!',
+                  style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
-                )),
+                ),
+              ),
+            ),
             GestureDetector(
               onTap: () {
                 showAsBottomSheet(context, height, width);
               },
               child: Container(
-                margin: EdgeInsets.only(left: 0),
+                margin: const EdgeInsets.only(left: 0),
                 width: width * 0.2,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: kPrimaryColor,
                     image: DecorationImage(
@@ -118,89 +122,203 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ),
         body: SafeArea(
           child: Container(
+            color: Colors.white,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Center(
                   // animagting the search bar to go up when you scroll down
                   child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 200),
                     width: width * 0.9,
                     padding: EdgeInsets.only(top: (dragDown) ? 0 : 50),
-                    child: CustomTextField(
-                      icon: Icon(
-                        Icons.search,
-                        color: Colors.grey,
-                      ),
-                      hintText: 'Search for an item',
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: width*0.8,
+                          child: CustomTextField(
+                            hidden: false,
+                            icon: const Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                            ),
+                            hintText: 'Search for an item',
+                            function: (value) {
+                              controller.search.value = value;
+                              if (controller.search.value != '') {
+                                controller.searchButton();
+                              }
+                              else {
+                                controller.normalMode();
+                              }
+                            },
+                            color: kSecondryColor.withOpacity(0.1),
+                          ),
+                        ),
+                        const SizedBox(width: 5,),
+                        PopupMenuButton(
+                          color: kPrimaryColor,
+
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              onTap: () {
+                                controller.sortButton('price');
+                              },
+                              child: Row(
+                                children: const <Widget> [
+                                  Icon(Icons.sort),
+                                  Text(
+                                    '  Sort by price',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () {
+                                  controller.sortButton('expire_date');
+                              },
+                              child: Row(
+                                children: const <Widget>[
+                                  Icon(Icons.sort),
+                                  Text(
+                                    '  Sort by expire date',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () {
+                                setState(() {
+                                  controller.sortButton('like');
+                                });
+                              },
+                              child: Row(
+                                children: const <Widget> [
+                                  Icon(Icons.sort),
+                                  Text(
+                                    '  Sort by likes',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () {
+                                  controller.sortButton('seen');
+                              },
+                              child: Row(
+                                children: const <Widget> [
+                                  Icon(Icons.sort),
+                                  Text(
+                                    '  Sort by views',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                          child: const Icon(
+                            Icons.filter_list,
+                            size: 35,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 // animating the Categories list to disappear when you scroll down
                 AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 200),
                     height: (dragDown) ? 0 : height * 0.05,
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: categories.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = index;
-                                });
-                              },
-                              child: CategoriesList(
-                                  category: categories[index],
-                                  select: (selectedIndex == index)
-                                      ? kPrimaryColor
-                                      : Colors.grey[400]));
+                          return Obx(()=> GestureDetector(
+                                onTap: () {
+                                  controller.selectedIndex.value = index;
+                                    if(index!=0) {
+                                      controller.categoryButton(categories[controller.selectedIndex.value]);
+                                    }else{
+                                      controller.normalMode();
+                                    }
+                                },
+                                child: CategoriesList(
+                                    category: categories[index],
+                                    select: (controller.selectedIndex.value == index)
+                                        ? kPrimaryColor
+                                        : Colors.grey[400])),
+                          );
                         })),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Stack(alignment: Alignment.topCenter, children: <Widget>[
                   // stacking the inner widget with the product list
                   AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 200),
                     height: (dragDown) ? height * 0.7 : height * 0.602,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         boxShadow: [
                           BoxShadow(color: kSecondryColor, blurRadius: 20)
                         ],
-                        color: kPrimaryColor,
+                       gradient: LinearGradient(
+                            colors: [
+                              kSecondryColor,
+                              kPrimaryColor
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
                         borderRadius: BorderRadius.only(
                             topRight: Radius.circular(40),
                             topLeft: Radius.circular(40))),
                   ),
                   Container(
                     decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     child: Padding(
-                      padding: EdgeInsets.only(top: 30),
+                      padding: const EdgeInsets.only(top: 30),
                       child: AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        height: (dragDown) ? height * 0.64 : height * 0.56,
-                        child: ListView.builder(
-                            controller: scrollController,
-                            itemCount: 4,
-                            itemBuilder: (BuildContext context, int index) {
-                              return MyProductCard(
-                                  radius: 5.0, shadowColor: Colors.black);
-                            }),
-                      ),
+                          duration: const Duration(milliseconds: 200),
+                          height: (dragDown) ? height * 0.64 : height * 0.56,
+                          child: Obx(() {
+                            if (controller.isLoading.value == true) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 5,
+                                ),
+                              );
+                            }
+                            return ListView.builder(
+                                controller: scrollController,
+                                itemCount: controller.allProductsList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return MyProductCard(
+                                    radius: 5.0,
+                                    shadowColor: Colors.black,
+                                    list: controller.allProductsList[index],
+                                    index: index,
+                                  );
+                                });
+                          })),
                     ),
                   )
                 ]),
               ],
             ),
           ),
-
-        )
-    );
+        ));
   }
 
   Future showAsBottomSheet(context, height, width) async {
@@ -214,11 +332,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           positioning: SnapPositioning.relativeToAvailableSpace,
         ),
         builder: (context, state) {
-          return Profile(
-            height: height,
-            width: width,
-            username: username,
-          );
+          ProfileController controller = Get.find();
+          return Obx(() {
+            if (controller.isLoading.value == true) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 5,
+                ),
+              );
+            }
+            return Profile(
+              height: height,
+              width: width,
+              username: controller.name.value,
+              myProduct: controller.ProfileProductsList.value,
+            );
+          });
         },
       );
     });

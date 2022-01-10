@@ -3,6 +3,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:untitled6/Moduls/All_Products/All_Products.dart';
 import 'package:untitled6/Moduls/SignUp/SignUp_Controller.dart';
+import 'package:untitled6/component/search_bar.dart';
+import 'package:untitled6/constant.dart';
 
 
 class signup extends StatelessWidget {
@@ -11,30 +13,35 @@ class signup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor:  Color(0xff86fde8),
-          leading: FlatButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back,
-            ),
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    return Scaffold(
+
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: (){
+            Get.back();
+          },
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
           ),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
         body: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomLeft,
                   end: Alignment.topRight,
                   colors: [
-                    Color(0xffacb6e5),
-                    Color(0xff86fde8),
+                    kPrimaryColor,
+                    kSecondryColor
                   ],
                 ),
               ),
@@ -62,169 +69,56 @@ class signup extends StatelessWidget {
                 SizedBox(
                   height: 25,
                 ),
-                Container(
-                  margin: EdgeInsets.only(left:50,right: 50,),
-                  padding: EdgeInsets.only(left:30,right:30,),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.email_outlined),
-                      SizedBox(width:10),
-                      Container(
-                        width:150,
-                        child: TextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {
-                           controller.email=value;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Enter Your Email',
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
                 SizedBox(
-                  height: 25,
-                ),
-                Container(
-                  margin: EdgeInsets.only(left:50,right: 50,),
-                  padding: EdgeInsets.only(left:30,right:30,),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.person_outline),
-                      SizedBox(width:10),
-                      Container(
-                        width:150,
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {
-                            controller.name=value;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Enter Your PhoneNumebr',
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+                    width: width*0.8,
+                    child: CustomTextField(
+                      icon: const Icon(
+                        Icons.person,
                       ),
-
-                    ],
-                  ),
+                      hintText: 'username',
+                      function: (value){
+                        controller.name = value;
+                      },
+                      hidden: false,
+                    ),
                 ),
+                SizedBox(height: 25,),
                 SizedBox(
-                  height: 25,
-                ),
-                Container(
-                  margin: EdgeInsets.only(left:50,right: 50,),
-                  padding: EdgeInsets.only(left:30,right:30,),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.person_outline),
-                      SizedBox(width:10),
-                      Container(
-                        width:150,
-                        child: TextFormField(
-                          onChanged: (value) {
-                            controller.name=value;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Enter Your Username',
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+                    width: width*0.8,
+                    child: CustomTextField(
+                      icon: const Icon(
+                        Icons.email,
                       ),
-
-                    ],
-                  ),
+                      hintText: 'username@example.com',
+                      function: (value){
+                        controller.email = value;
+                      },
+                      hidden: false,
+                    ),
                 ),
+                SizedBox(height: 25,),
                 SizedBox(
-                  height: 25,
+                    width: width*0.8,
+                    child: CustomTextField(
+                      icon: const Icon(Icons.lock_outline),
+                      hintText: 'Password',
+                      function: (value){
+                        controller.password = value;
+                      },
+                      hidden: true,
+                    )
                 ),
+                SizedBox(height: 25,),
                 SizedBox(
-                  height: 25,
-                ),
-                Container(
-                  margin: EdgeInsets.only(left:50,right: 50,),
-                  padding: EdgeInsets.only(left:30,right:30,),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.person_outline),
-                      SizedBox(width:10),
-                      Container(
-                        width:150,
-                        child: TextFormField(
-                          onChanged: (value) {
-                            controller.name=value;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Enter Your Username',
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left:50,right: 50,),
-                  padding: EdgeInsets.only(left:30,right:30,),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.lock_open_outlined),
-                      SizedBox(width:10),
-                      Container(
-                        width:150,
-                        child: TextField(
-                          onChanged: (value) {
-                            controller.password=value;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Enter Your Password',
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
+                    width: width*0.8,
+                    child: CustomTextField(
+                      icon: const Icon(Icons.phone),
+                      hintText: 'Phone Number',
+                      function: (value){
+                        controller.phone_number = value;
+                      },
+                      hidden: false,
+                    )
                 ),
                 SizedBox(height:30),
                 GestureDetector(
@@ -235,14 +129,13 @@ class signup extends StatelessWidget {
                     padding: EdgeInsets.only(left: 120,right:120,top:12,bottom: 12),
                     decoration:BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: Colors.deepPurpleAccent,
+                      color: kFourthColor.withOpacity(0.6),
                     ),
                     child: Text(
                       'Register',
                       style:TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -252,17 +145,15 @@ class signup extends StatelessWidget {
 
           ],
         ),
-
-      ),
     );
   }
   void OnClickRegister() async {
     EasyLoading.show(status: 'loading..');
-   await controller.RegisterButton();
-   if(controller.SignUpStatus)
+   bool signed = await controller.RegisterButton();
+   if(signed)
      {
        EasyLoading.showSuccess(controller.message ,dismissOnTap: true);
-       Get.offNamed('/Login');
+       Get.offNamed('/AllProducts');
      }
    else
      {
@@ -272,4 +163,3 @@ class signup extends StatelessWidget {
   }
 
 }
-
